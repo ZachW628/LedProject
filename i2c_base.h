@@ -53,7 +53,7 @@ void set_chip_high(int fd, int chip_number, int* list);
 void set_chip_low(int fd, int chip_number, int* list);
 void map_pins(int fd1, int fd2, int* list, int pin_state);
 
-void i2c_base_init(struct i2c_base*);
+struct i2c_base* i2c_base_init();
 void i2c_base_destroy(struct i2c_base*);
 
 int* chip_list[CHIP_NUM];

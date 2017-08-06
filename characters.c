@@ -8,24 +8,6 @@
 
 int* character_leds;
 
-int main() {
-  Character_leds_init();
-  int* test_list = letter_A(12, 1);
-
-  struct i2c_base* base_layer = malloc(sizeof(struct i2c_base));;
-  i2c_base_init(base_layer);
-
-  for (int i = 1; i < test_list[0] + 1; i++) {
-    printf("Total number %d\n actual value: %d\n", test_list[0], test_list[i]); 
-  }
-
-  base_layer->map(*base_layer->file_descriptor_1, *base_layer->file_descriptor_1, test_list, HIGH); 
-
-
-  i2c_base_destroy(base_layer);
-  free(character_leds);
-}
-
 
 int pinner(int x) {
   if (x == 0)
@@ -62,11 +44,17 @@ int pinner(int x) {
     return 0;
 }
 
+
 void Character_leds_init() {
-  for (int i = 1; i < 41; i++) {
-    character_leds = malloc(41 * sizeof(int));
-  }
+  character_leds = malloc(41 * sizeof(int));
+  character_leds[0] = 0;
 }
+
+
+void Character_leds_destroy() {
+  free(character_leds);
+}
+
 
 int converter(int x) {
   int multiplier = x / 16;
@@ -75,26 +63,8 @@ int converter(int x) {
   return ((multiplier* 16) + pin);
 }
 
+
 /*
-void initialize_setup() {
-  wiringPiSetup();
- 
-  mcp23017Setup(BASE, 0x20);
-  mcp23017Setup((BASE + 16), 0x21);
-  mcp23017Setup((BASE + 32), 0x22);
-  mcp23017Setup((BASE + 48), 0x23);
-  mcp23017Setup((BASE + 64), 0x24);
-  mcp23017Setup((BASE + 80), 0x25);
-  mcp23017Setup((BASE + 96), 0x26);
-  mcp23017Setup((BASE + 112), 0x27);
-
-  printf("Setup Complete!!!\n"); 
-
-  for (int i = 0; i < LIGHTS; i++)
-    pinMode((BASE + i), OUTPUT);
-}
-
-
 void all_off() {
   for (int i = 0; i < LIGHTS; i++)
     digitalWrite((BASE + converter(i)), LOW);
@@ -131,756 +101,824 @@ void cycle_characters(character_function* characters) {
 }
 */
 
-void validate_light(int number_for_light, int state) {
-  printf("Validate light\n");
-  int column = (number_for_light - BASE) / 8;
+
+void validate_light(int number_for_light) {
+  int column = (number_for_light) / 8;
   if (column >= 0 && column <= NUMBER_COLUMNS) {
-    character_leds[character_leds[0] + 1] = number_for_light;
+    character_leds[character_leds[0]+1] = number_for_light;
     character_leds[0] += 1; 
   }
 }
 
 
-int* letter_A(int column, int state) {
+int* letter_A(int column) {
   character_leds[0] = 0;
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 3)); 
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 3)); 
+  validate_light(converter((column - 3) * 8 + 7));  
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 1));  
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));  
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 6));
   return character_leds;
 }
 
-/*
-void letter_B(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);  
+
+int* letter_B(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 1)); 
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_C(int column, int state) { 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
-}
-*/
-/*
-void letter_D(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state); 
+int* letter_C(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 7));  
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_E(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);   
+int* letter_D(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 7));  
+  validate_light(converter((column - 4) * 8 + 1)); 
+  validate_light(converter((column - 4) * 8 + 2));  
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 4));  
+  validate_light(converter((column - 4) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_F(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);    
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);   
+int* letter_E(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;   
 }
 
 
-void letter_G(int column, int state) { 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);  
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);  
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
+int* letter_F(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 7));    
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;   
 }
 
 
-void letter_H(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);  
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_G(int column) {
+  character_leds[0] = 0; 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7));  
+  validate_light(converter((column - 3) * 8 + 0));  
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3));
+  return character_leds;
 }
 
 
-void letter_I(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state);
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);  
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_H(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 3) * 8 + 4));  
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 1));  
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));  
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_J(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_I(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0));
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 3));  
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_K(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_J(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 1));
+  validate_light(converter((column - 1) * 8 + 2)); 
+  validate_light(converter((column - 1) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6)); 
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_L(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state);
+int* letter_K(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 3) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_M(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
+int* letter_L(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  return character_leds;
 }
 
 
-void letter_N(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
+int* letter_M(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 1));
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  return character_leds;
 }
 
 
-void letter_O(int column, int state) { 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state); 
+int* letter_N(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 6)); 
+  validate_light(converter((column - 3) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5));
+  return character_leds;
 }
 
 
-void letter_P(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state);
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* letter_O(int column) {
+  character_leds[0] = 0; 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds; 
 }
 
 
-void letter_Q(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state);
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
+int* letter_P(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2));
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 4)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_R(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state);
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* letter_Q(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2));
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 2));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 3) * 8 + 2));
+  validate_light(converter((column - 3) * 8 + 3));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 6)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  return character_leds; 
 }
 
 
-void letter_S(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state);  
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_R(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1));
+  validate_light(converter(column * 8 + 2));
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 2));
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 1));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_T(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);  
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_S(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0));  
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_U(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* letter_T(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 3));  
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void letter_V(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* letter_U(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4));
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 1)); 
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_W(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* letter_V(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4));
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 1));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_X(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state);
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
-}
-
-void letter_Y(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_W(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3)); 
+  validate_light(converter(column * 8 + 4));
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2));
+  validate_light(converter((column - 2) * 8 + 3)); 
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 1)); 
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
 
 
-void letter_Z(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* letter_X(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1));
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 2));
+  validate_light(converter((column - 1) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 2));
+  validate_light(converter((column - 3) * 8 + 5)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 6)); 
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
+}
+
+int* letter_Y(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2));
+  validate_light(converter((column - 2) * 8 + 3)); 
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void number_0(int column, int state) {  
-  validate_light((BASE + converter(column * 8 + 2)), state); 
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state); 
+int* letter_Z(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 1) * 8 + 2));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void number_1(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);  
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state); 
+int* number_0(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 1)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 3) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 4)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  return character_leds; 
 }
 
 
-void number_2(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);  
+int* number_1(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0));
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 3));  
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  return character_leds; 
 }
 
 
-void number_3(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state);  
-  validate_light((BASE + converter(column * 8 + 6)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state); 
+int* number_2(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1));
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 2));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 3)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 0));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;  
 }
 
 
-void number_4(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 1)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state); 
+int* number_3(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1));  
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0)); 
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds; 
 }
 
 
-void number_5(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 4)), state);
-  validate_light((BASE + converter(column * 8 + 7)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* number_4(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 5));
+  validate_light(converter((column - 2) * 8 + 3)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 3) * 8 + 2));
+  validate_light(converter((column - 3) * 8 + 3));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 6)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 3));
+  return character_leds; 
 }
 
 
-void number_6(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state);
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 4)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
+int* number_5(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 4));
+  validate_light(converter(column * 8 + 7));
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 0));
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void number_7(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state); 
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 7)), state);
+int* number_6(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2));
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 4)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 3)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  return character_leds;
 }
 
 
-void number_8(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 1)), state); 
-  validate_light((BASE + converter(column * 8 + 2)), state);
-  validate_light((BASE + converter(column * 8 + 3)), state);
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 0)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 0)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 2)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* number_7(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 7)); 
+  validate_light(converter((column - 1) * 8 + 2));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 3));
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 5));
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 6));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
 }
 
 
-void number_9(int column, int state) {
-  validate_light((BASE + converter(column * 8 + 0)), state); 
-  validate_light((BASE + converter(column * 8 + 5)), state); 
-  validate_light((BASE + converter(column * 8 + 6)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 1)), state);
-  validate_light((BASE + converter((column - 1) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 1) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 2)), state); 
-  validate_light((BASE + converter((column - 2) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 2) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 3)), state);
-  validate_light((BASE + converter((column - 3) * 8 + 4)), state); 
-  validate_light((BASE + converter((column - 3) * 8 + 7)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 4)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 5)), state);
-  validate_light((BASE + converter((column - 4) * 8 + 6)), state);
+int* number_8(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 1)); 
+  validate_light(converter(column * 8 + 2));
+  validate_light(converter(column * 8 + 3));
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2));
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
 }
-*/
+
+
+int* number_9(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0)); 
+  validate_light(converter(column * 8 + 5)); 
+  validate_light(converter(column * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 1));
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 4));
+  validate_light(converter((column - 2) * 8 + 7));
+  validate_light(converter((column - 3) * 8 + 3));
+  validate_light(converter((column - 3) * 8 + 4)); 
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 4));
+  validate_light(converter((column - 4) * 8 + 5));
+  validate_light(converter((column - 4) * 8 + 6));
+  return character_leds;
+}
+
 
 character_function* get_array_of_characters() {
   character_function* characters;
-  //characters = malloc(NUMBER_CHARACTERS * sizeof(character_function));
-  characters = malloc(1 * sizeof(character_function));
-
+  characters = malloc(NUMBER_CHARACTERS * sizeof(character_function));
+  //characters = malloc(1 * sizeof(character_function));
 
   characters[0] = letter_A;
-  //characters[1] = letter_B;
-  //characters[2] = letter_C;
-/*
+  characters[1] = letter_B;
+  characters[2] = letter_C;
   characters[3] = letter_D;
   characters[4] = letter_E;
   characters[5] = letter_F;
@@ -914,7 +952,7 @@ character_function* get_array_of_characters() {
   characters[33] = number_7;
   characters[34] = number_8;
   characters[35] = number_9;
-*/
+
   return characters;
 }
 

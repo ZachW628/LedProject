@@ -1,19 +1,3 @@
-  /*
-  int* test_list = malloc(11 * sizeof(int));
-  test_list[0] = 10;
-  test_list[1] = 15;
-  test_list[2] = 27;
-  test_list[3] = 33;
-  test_list[4] = 46;
-  test_list[5] = 79;
-  test_list[6] = 0;
-  test_list[7] = 11;
-  test_list[8] = 52;
-  test_list[9] = 100;
-  test_list[10] = 92;
-  */
-
-
 #include "i2c_base.h"
 
 
@@ -123,14 +107,12 @@ int pin_converter(int pin) {
 
 void set_chip_high(int fd, int chip_number, int* list) {
   int length = *(list - 1);
-  printf("%d\n", length);
+  //printf("%d\n", length);
   
   int A_reg = i2c_read(fd, Addr[chip_number], 0x14);
   int B_reg = i2c_read(fd, Addr[chip_number], 0x15);
 
   for (int i = 0; i < length; i++) {
-    printf("%d\n", i);
-    printf("------------%d\n", list[i]);
     if (list[i] < 8)
       A_reg = A_reg |= 1 << (list[i]);
     else
@@ -146,14 +128,12 @@ void set_chip_high(int fd, int chip_number, int* list) {
 
 void set_chip_low(int fd, int chip_number, int* list) {
   int length = *(list - 1);
-  printf("%d\n", length);
+  //printf("%d\n", length);
   
   int A_reg = i2c_read(fd, Addr[chip_number], 0x14);
   int B_reg = i2c_read(fd, Addr[chip_number], 0x15);
 
   for (int i = 0; i < length; i++) {
-    printf("%d\n", i);
-    printf("------------%d\n", list[i]);
     if (list[i] < 8)
       A_reg = A_reg &= ~(1 << (list[i]));
     else
@@ -172,8 +152,6 @@ void map_pins(int fd1, int fd2, int* list, int pin_state) {
   chip_set[1] = set_chip_high;
   chip_set[0] = set_chip_low;
 
-
-
   for (int i = 0; i < CHIP_NUM; i++) {
     *(chip_list[i]) = 0;
   }
@@ -191,18 +169,18 @@ void map_pins(int fd1, int fd2, int* list, int pin_state) {
 }
 
 
-void i2c_base_init(struct i2c_base* i2c_item) {
-  printf("made it 1\n");
+struct i2c_base* i2c_base_init() {
+  struct i2c_base* i2c_item = malloc(sizeof(struct i2c_base));
   int* fd1 = i2c_bus_init(BUS_1);
   //(*i2c_item).file_descriptor_1 = malloc(sizeof(int));; 
   (*i2c_item).file_descriptor_1 = fd1;
   //i2c_item.file_descriptor_2 = i2c_bus_init(BUS_2);
-  //i2c_item->map = map_pins;
-  printf("made it 2\n");
+  i2c_item->map = map_pins;
   for(int i = 0; i < CHIP_NUM; i++) {
     chip_list[i] = malloc(17 * sizeof(int));
   }
 
+  return i2c_item;
 }
 
 
@@ -215,5 +193,5 @@ void i2c_base_destroy(struct i2c_base* i2c_item) {
   for(int i = 0; i < CHIP_NUM; i++) { 
     free(chip_list[i]);
   }
-
+  free(i2c_item);
 }

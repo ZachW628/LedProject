@@ -1,16 +1,14 @@
-//#include <stdio.h>
-//#include <stdlib.h>
-#include "i2c_base.h"
+#include <stdio.h>
+#include <stdlib.h>
+//#include "i2c_base.h"
 
-
-#define BASE 64
 #define DELAY 75
 #define LIGHTS 112
 #define NUMBER_CHARACTERS 36
-#define NUMBER_COLUMNS 13 
+#define NUMBER_COLUMNS 13  // 0 indexed
 
 
-typedef int* (*character_function)(int, int);
+typedef int* (*character_function)(int);
 
 
 int converter(int);
@@ -24,52 +22,49 @@ void initialize_setup();
 //void cycle_characters(character_function*);
 
 void Character_leds_init();
+void Character_leds_destroy();
 
-void validate_light(int, int);
+void validate_light(int);
 
 
 
-int* letter_A(int, int);
-//void letter_B(int, int);
-//void letter_C(int, int);
+int* letter_A(int);
+int* letter_B(int);
+int* letter_C(int);
+int* letter_D(int);
+int* letter_E(int);
+int* letter_F(int);
+int* letter_G(int);
+int* letter_H(int);
+int* letter_I(int);
+int* letter_J(int);
+int* letter_K(int);
+int* letter_L(int);
+int* letter_M(int);
+int* letter_N(int);
+int* letter_O(int);
+int* letter_P(int);
+int* letter_Q(int);
+int* letter_R(int);
+int* letter_S(int);
+int* letter_T(int);
+int* letter_U(int);
+int* letter_V(int);
+int* letter_W(int);
+int* letter_X(int);
+int* letter_Y(int);
+int* letter_Z(int);
 
-/*
-void letter_D(int, int);
-void letter_E(int, int);
-void letter_F(int, int);
-void letter_G(int, int);
-void letter_H(int, int);
-void letter_I(int, int);
-void letter_J(int, int);
-void letter_K(int, int);
-void letter_L(int, int);
-void letter_M(int, int);
-void letter_N(int, int);
-void letter_O(int, int);
-void letter_P(int, int);
-void letter_Q(int, int);
-void letter_R(int, int);
-void letter_S(int, int);
-void letter_T(int, int);
-void letter_U(int, int);
-void letter_V(int, int);
-void letter_W(int, int);
-void letter_X(int, int);
-void letter_Y(int, int);
-void letter_Z(int, int);
-
-void number_0(int, int);
-void number_1(int, int);
-void number_2(int, int);
-void number_3(int, int);
-void number_4(int, int);
-void number_5(int, int);
-void number_6(int, int);
-void number_7(int, int);
-void number_8(int, int);
-void number_9(int, int);
-*/
-
+int* number_0(int);
+int* number_1(int);
+int* number_2(int);
+int* number_3(int);
+int* number_4(int);
+int* number_5(int);
+int* number_6(int);
+int* number_7(int);
+int* number_8(int);
+int* number_9(int);
 
 character_function* get_array_of_characters(); 
 
