@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "i2c_base.h"
+
 
 #define DELAY 75
 #define LIGHTS 112

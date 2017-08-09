@@ -1,14 +1,18 @@
 #include "character_queue.h"
 
-int* full_matrix_leds;
+enum icanon_state {
+    NB_DISABLE,
+    NB_ENABLE
+};
 
 int main() {
   struct character_queue* main_list = initialize_list();
   character_function* LETTER_A = get_array_of_characters();
 
+  insert_character(main_list, LETTER_A[25], 5);
   insert_character(main_list, LETTER_A[0], 5);
-  insert_character(main_list, LETTER_A[1], 5);
   insert_character(main_list, LETTER_A[2], 5);
+  insert_character(main_list, LETTER_A[7], 5);
   scroll_text(main_list);
   
   destroy_list(main_list);
@@ -16,6 +20,33 @@ int main() {
 }
 
 // ==========================================================================================
+
+
+
+
+void nonblock(int state) {
+  struct termios cur_state;
+  tcgetattr(STDIN_FILENO, &cur_state);
+  if (state == NB_ENABLE) {
+    cur_state.c_lflag &= ~ ICANON;
+    cur_state.c_cc[VMIN] = 1;
+  } else if (state == NB_DISABLE) {
+    cur_state.c_lflag |= ICANON;
+  }
+  tcsetattr(STDIN_FILENO, TCSANOW, &cur_state);
+}
+
+
+int kbhit() {
+  struct timeval tv;
+  fd_set fd;
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;
+  FD_ZERO(&fd);
+  FD_SET(STDIN_FILENO, &fd);
+  select(STDIN_FILENO+1, &fd, NULL, NULL, &tv);
+  return FD_ISSET(STDIN_FILENO, &fd);
+}
 
 
 struct character_queue* initialize_list() {
@@ -122,6 +153,19 @@ void increment_list(struct character_queue* list) {
 }
 
 
+void find_lights_to_turn_off(int* turn_off_list, int* next_on_list) {
+  for (int i = 0; i < turn_off_list[0]; i++) {
+    for(int j = 0; j < next_on_list[0]; j++) {
+      if (turn_off_list[i + 1] == next_on_list[j + 1]) {
+        turn_off_list[i + 1] = turn_off_list[turn_off_list[0]];
+        turn_off_list[0] -= 1;
+        j = 0;
+      }
+    }
+  }
+}
+
+
 void scroll_text(struct character_queue* list) {
   int* current_lights = malloc((1 + LIGHTS) * sizeof(int));
   int* next_generation_lights = malloc((1 + LIGHTS) * sizeof(int));
@@ -129,14 +173,17 @@ void scroll_text(struct character_queue* list) {
   current_lights[0] = 0;
   next_generation_lights[0] = 0;
 
-  while(1) {
+  nonblock(NB_ENABLE);
+  while(!kbhit()) {
     get_valid_lights_queue(list, current_lights);
     turn_on_list(list->m_i2c_item, current_lights);
     increment_list(list);
     get_valid_lights_queue(list, next_generation_lights);
-    usleep(50000);
+    usleep(60000);
+    find_lights_to_turn_off(current_lights, next_generation_lights);
     turn_off_list(list->m_i2c_item, current_lights);
   }
+  nonblock(NB_DISABLE);
 
   free(current_lights);
   free(next_generation_lights);
@@ -145,7 +192,13 @@ void scroll_text(struct character_queue* list) {
 
 void destroy_list(struct character_queue* list) {
 
-  // have to dlete all elements in the list
+  struct character_item* temp, *temp2;
+  temp = list->m_head;
+  while(temp != NULL) {
+    temp2 = temp;
+    temp = temp->m_next;
+    free(temp2);
+  }
   
   i2c_base_destroy(list->m_i2c_item);
   Character_leds_destroy();

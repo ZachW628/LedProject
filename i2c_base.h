@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-//#define LIGHTS 128
 #define CHIP_NUM 8
 #define I2C_DEVICE_1 "/dev/i2c-1"
 #define I2C_DEVICE_2 "/dev/i2c-0"
