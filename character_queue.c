@@ -5,6 +5,8 @@ enum icanon_state {
     NB_ENABLE
 };
 
+int SLEEP =70000;
+
 int main() {
   struct character_queue* main_list = initialize_list();
   character_function* LETTER_A = get_array_of_characters();
@@ -118,9 +120,6 @@ void insert_character(struct character_queue* list, character_function item, int
 }
 
 
-void combine_list(int*, int*);
-void get_valid_lights_queue(struct character_queue*, int*);
-
 void combine_list(int* matrix_leds, int* character_list) {
   for (int i = 0; i < character_list[0]; i++) {
     matrix_leds[matrix_leds[0] + 1] = character_list[i + 1];
@@ -153,14 +152,18 @@ void increment_list(struct character_queue* list) {
 }
 
 
-void find_lights_to_turn_off(int* turn_off_list, int* next_on_list) {
-  for (int i = 0; i < turn_off_list[0]; i++) {
-    for(int j = 0; j < next_on_list[0]; j++) {
-      if (turn_off_list[i + 1] == next_on_list[j + 1]) {
-        turn_off_list[i + 1] = turn_off_list[turn_off_list[0]];
-        turn_off_list[0] -= 1;
-        j = 0;
-      }
+void find_lights_to_turn_off(int* turn_off_list, int* next_on_light) {
+  for (int i = 0; i < next_on_light[0]; i++) {
+    remove_from_list(next_on_light[i + 1], turn_off_list);
+  }
+}
+
+void remove_from_list(int number, int* list) {
+  for (int i = 0; i < list[0]; i++) {
+    if (number == list[i + 1]) {
+      list[i + 1] = list[list[0]];
+      list[0] -= 1;
+      return;
     }
   }
 }
@@ -172,15 +175,19 @@ void scroll_text(struct character_queue* list) {
 
   current_lights[0] = 0;
   next_generation_lights[0] = 0;
+  struct timeval start_time, end_time;
 
   nonblock(NB_ENABLE);
   while(!kbhit()) {
+    gettimeofday(&start_time, NULL);
     get_valid_lights_queue(list, current_lights);
     turn_on_list(list->m_i2c_item, current_lights);
     increment_list(list);
     get_valid_lights_queue(list, next_generation_lights);
-    usleep(60000);
     find_lights_to_turn_off(current_lights, next_generation_lights);
+    gettimeofday(&end_time, NULL);
+    //usleep(SLEEP - (end_time.tv_usec - start_time.tv_usec));
+    usleep(SLEEP);
     turn_off_list(list->m_i2c_item, current_lights);
   }
   nonblock(NB_DISABLE);

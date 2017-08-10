@@ -4,6 +4,7 @@
 #include <termios.h>
 #include "characters.h"
 #include "i2c_base.h"
+#include <sys/time.h>
 
 struct character_item {
   character_function m_character_function;
@@ -33,10 +34,14 @@ void turn_on_list(struct i2c_base*, int*);
 void turn_off_list(struct i2c_base*, int*);
 
 void find_lights_to_turn_off(int*, int*);
+void remove_from_list(int, int*);
+
 void insert_character(struct character_queue*, character_function, int);
+
+void combine_list(int*, int*);
+void get_valid_lights_queue(struct character_queue*, int*);
+
 void increment_list(struct character_queue*);
 void scroll_text(struct character_queue*);
 void destroy_list(struct character_queue*);
-
-
 
