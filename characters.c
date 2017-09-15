@@ -111,6 +111,98 @@ void validate_light(int number_for_light) {
 }
 
 
+int* Special_SPACE(int column) {
+  character_leds[0] = 0;
+  return character_leds;
+}
+
+
+int* Special_EXCLAMATION(int column) {
+  character_leds[0] = 0;
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 1) * 8 + 2)); 
+  validate_light(converter((column - 1) * 8 + 3)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 6)); 
+  validate_light(converter((column - 1) * 8 + 7));
+  return character_leds;
+}
+
+
+int* Special_QOUTE(int);
+
+
+int* Special_HASHTAG(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 2)); 
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter((column - 1) * 8 + 0));
+  validate_light(converter((column - 1) * 8 + 1)); 
+  validate_light(converter((column - 1) * 8 + 2)); 
+  validate_light(converter((column - 1) * 8 + 3));
+  validate_light(converter((column - 1) * 8 + 4)); 
+  validate_light(converter((column - 1) * 8 + 5)); 
+  validate_light(converter((column - 1) * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 7));
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 1)); 
+  validate_light(converter((column - 3) * 8 + 2)); 
+  validate_light(converter((column - 3) * 8 + 3));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 5)); 
+  validate_light(converter((column - 3) * 8 + 6)); 
+  validate_light(converter((column - 3) * 8 + 7)); 
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 5));
+  return character_leds;
+}
+
+
+int* Special_QWERTY(int column) {
+  character_leds[0] = 0;
+  validate_light(converter(column * 8 + 0));  
+  validate_light(converter(column * 8 + 5));
+  validate_light(converter(column * 8 + 6));
+  validate_light(converter((column - 1) * 8 + 0)); 
+  validate_light(converter((column - 1) * 8 + 4));
+  validate_light(converter((column - 1) * 8 + 7)); 
+  validate_light(converter((column - 2) * 8 + 0)); 
+  validate_light(converter((column - 2) * 8 + 1)); 
+  validate_light(converter((column - 2) * 8 + 2)); 
+  validate_light(converter((column - 2) * 8 + 3));  
+  validate_light(converter((column - 2) * 8 + 4)); 
+  validate_light(converter((column - 2) * 8 + 5)); 
+  validate_light(converter((column - 2) * 8 + 6));
+  validate_light(converter((column - 2) * 8 + 7)); 
+  validate_light(converter((column - 3) * 8 + 0));
+  validate_light(converter((column - 3) * 8 + 4));
+  validate_light(converter((column - 3) * 8 + 7));
+  validate_light(converter((column - 4) * 8 + 1));
+  validate_light(converter((column - 4) * 8 + 2)); 
+  validate_light(converter((column - 4) * 8 + 3));
+  validate_light(converter((column - 4) * 8 + 7));
+  return character_leds;
+}
+
+
+int* Special_MOD(int);
+int* Special_AND(int);
+int* Special_Apostrophe(int);
+int* Special_LEFT_PAREN(int);
+int* Special_RIGHT_PAREN(int);
+int* Special_STAR(int);
+int* Special_PLUS(int);
+int* Special_COMMA(int);
+int* Special_MINUS(int);
+int* Special_PERIOD(int);
+int* Special_FOR_SLASH(int);
+
+
+
+
 int* letter_A(int column) {
   character_leds[0] = 0;
   validate_light(converter(column * 8 + 0)); 
