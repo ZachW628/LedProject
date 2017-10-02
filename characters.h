@@ -89,15 +89,18 @@ int* letter_X(int);
 int* letter_Y(int);
 int* letter_Z(int);
 
-int* Special_LEFTT_BRACKET(int);
+
+int* Special_LEFT_BRACKET(int);
 int* Special_BACK_SLASH(int);
 int* Special_RIGHT_BRACKET(int);
 int* Special_UP_CARET(int);
 int* Special_UNDERSCORE(int);
 int* Special_BACK_TIC(int);
-int* Special_LEFT_CURLY_BRACKET(int);
+
+// After this we need to do more math to make the array linear
+int* Special_LEFT_CURLY_BRACE(int);
 int* Special_VERTICAL_BAR(int);
-int* Special_RIGHT_CURLY_BRACKET(int);
+int* Special_RIGHT_CURLY_BRACE(int);
 int* Special_TILDA(int);
 
 

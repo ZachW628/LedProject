@@ -28,4 +28,8 @@ Current Progress 8/6/17
    === Things that I might want to do in the future ===
        - time the calaculations of the list so that i sleep for the same time in between 
          position changes. this might have a very insigniicant impact...
+
 		^^^ i TRIED THIS CHANGE IT MADE IT WAY MORE INCONSITENT ^^^
+
+
+https://www.youtube.com/watch?v=XiDGgSCfQbI
