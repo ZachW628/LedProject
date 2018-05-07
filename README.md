@@ -33,6 +33,7 @@ Current Progress 8/6/17
 
 		^^^ i TRIED THIS CHANGE IT MADE IT WAY MORE INCONSITENT ^^^
 
+[![LED Project](https://img.youtube.com/vi/XiDGgSCfQbI/0.jpg)](https://www.youtube.com/watch?v=XiDGgSCfQbI)
 
 https://www.youtube.com/watch?v=XiDGgSCfQbI
 
