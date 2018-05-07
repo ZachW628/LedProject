@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ZachW628/LedProject.svg?branch=master)](https://travis-ci.org/ZachW628/LedProject)
+
 # LedProject
 Led matrix project
 
@@ -33,3 +35,6 @@ Current Progress 8/6/17
 
 
 https://www.youtube.com/watch?v=XiDGgSCfQbI
+
+
+In file charachers.c the fucntion that creates the array of function pointers to the the characters is outdated, needs to be fixed with a function* array that has room for new characters too. Don't use yet lol. 
