@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ZachW628/LedProject.svg?branch=master)](https://travis-ci.org/ZachW628/LedProject)
+
 # LedProject
 Led matrix project
 
