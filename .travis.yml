@@ -4,6 +4,8 @@ sudo: enabled
 language: cpp
 
 before_install:
+  - sudo apt-get install i2c-tools
+  - sudo apt-get install libi2c-dev
   - make
 
 
