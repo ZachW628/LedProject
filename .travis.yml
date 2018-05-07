@@ -1,0 +1,12 @@
+
+sudo: enabled
+
+language: cpp
+
+before_install:
+  - make
+
+
+script:
+  - make clean
+  - make
