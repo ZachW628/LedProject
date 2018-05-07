@@ -4,7 +4,7 @@ int main() {
   Character_leds_init();
   struct i2c_base* i2c_item = i2c_base_init();
 
-
+  int* new_list;
   //int* new_list = Special_(11);
   //int* new_list = Special_(11);
   //int* new_list = Special_TILDA(11);
